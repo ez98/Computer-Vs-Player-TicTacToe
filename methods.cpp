@@ -56,7 +56,7 @@ char board[3][3] = { { '1', '2', '3' },
 //		}
 //	}
 
-int counter_player_win() {
+int counter_player_win() { //checks for all possible player wins and counters the player's winning spot by filling it in
 	if (board[0][0] == player_letter && board[0][1] == player_letter && board[0][2] != computer_letter) { return 3; } //Top Row
 	if (board[0][1] == player_letter && board[0][2] == player_letter && board[0][0] != computer_letter) { return 1; } //Top Row
 	if (board[0][0] == player_letter && board[0][2] == player_letter && board[0][1] != computer_letter) { return 2; } //Top Row
@@ -83,7 +83,7 @@ int counter_player_win() {
 	if (board[0][2] == player_letter && board[2][0] == player_letter && board[1][1] != computer_letter) { return 5; } //Vertical Incline
 	else return 0; 
 }
-int computer_win() {
+int computer_win() { //Checks for all possible computer wins and fills in the winning spot.
 	if (board[0][0] == computer_letter && board[0][1] == computer_letter && board[0][2] != computer_letter && board[0][2] != player_letter) { return 3; } //Top Row
 	if (board[0][1] == computer_letter && board[0][2] == computer_letter && board[0][0] != computer_letter && board[0][0] != player_letter) { return 1; } //Top Row
 	if (board[0][0] == computer_letter && board[0][2] == computer_letter && board[0][1] != computer_letter && board[0][1] != player_letter) { return 2; } //Top Row
@@ -115,39 +115,27 @@ void computer_move() {
 	cout << "Computers turn..." << endl;
 	cout << "\n";
 	Sleep(750);
-	if (computer_win() >= 1)
+	if (computer_win() >= 1) //First the computer checks for possible wins.
 	{
 		pc_choice = computer_win();
 		goto choice_label;
 	}
-	else if (counter_player_win() >= 1)
+	else if (counter_player_win() >= 1)//If no possible wins, we check for possible player wins and counter them.
 	{
 		pc_choice = counter_player_win();
 		goto choice_label;
 	}
-	else if (spaces_used.size() > 0) 
+	else if (spaces_used.size() >= 0)//If no computer wins and counter spots are available, computer generates a random integer and fills in a empty spot
 	{
 		int rand_int{};
 		srand(time(0));
 		rand_int = generate_int();
-		//use vector searching algorithm to save your sorry ass on this logic
+		//use vector searching algorithm
 		vector<int>::iterator y = find(spaces_used.begin(), spaces_used.end(), rand_int);
-		while (y != spaces_used.end()) 
+		while (y != spaces_used.end()) //while rand_int is in the spaces_used vector, continue to generate a integer until false
 		{
 			rand_int = generate_int();
 			y = find(spaces_used.begin(), spaces_used.end(), rand_int);
-		}
-		pc_choice = rand_int;
-		goto choice_label;
-	}
-	else if (spaces_used.size() == 0)
-	{
-		int rand_int{};
-		srand(time(0));
-		rand_int = rand() % 10 + 1;
-		while (rand_int > 9 || rand_int < 1) 
-		{
-			rand_int = rand() % 10 + 1;
 		}
 		pc_choice = rand_int;
 		goto choice_label;
@@ -167,10 +155,10 @@ choice_label:
 	}
 	if (board[row][column] != 'X' && board[row][column] != 'O') {
 		board[row][column] = computer_letter;
-		spaces_used.push_back(pc_choice);
+		spaces_used.push_back(pc_choice); //push back the spot into the spaces_used vector.
 		print_board();
 	}
-	else if (board[row][column] == player_letter || board[row][column] == computer_letter)
+	else if (board[row][column] == 'O' || board[row][column] == 'X')
 	{
 	cout << "Position: " << row << "-" << column << " - is taken by Player " << board[row][column] << "!" << endl;
 	cout << "Choose another position." << endl;
